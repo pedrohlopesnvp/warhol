@@ -4,15 +4,20 @@ let score: number = 0;
 let record: number = 0;
 
 // Pegando os elementos do placar
-const scoreLabel = document.querySelector(".infos p:nth-child(1) label") as HTMLElement;
-const recordLabel = document.querySelector(".infos p:nth-child(2) label") as HTMLElement;
+const scoreLabel = document.querySelector(".infos p:nth-child(2) label") as HTMLElement;
+const recordLabel = document.querySelector(".infos p:nth-child(3) label") as HTMLElement;
+const restartButton = document.querySelector(".restart") as HTMLElement;
+
+// Elementos da tela de início
+const startScreen = document.querySelector(".start-screen") as HTMLElement;
+const playButton = document.querySelector(".play-button") as HTMLElement;
 
 const blue = document.querySelector(".blue") as HTMLElement | null;
 const red = document.querySelector(".red") as HTMLElement | null;
 const green = document.querySelector(".green") as HTMLElement | null;
 const yellow = document.querySelector(".yellow") as HTMLElement | null;
 
-if (!blue || !red || !green || !yellow || !scoreLabel || !recordLabel) {
+if (!blue || !red || !green || !yellow || !scoreLabel || !recordLabel || !restartButton || !startScreen || !playButton) {
   throw new Error("Elementos do DOM não encontrados.");
 }
 
@@ -52,9 +57,8 @@ const checkOrder = (): void => {
     }
   }
   if (clickedOrder.length === order.length) {
-    score++; // Aumenta a pontuação ao passar de nível
-    updateScore(); // Atualiza o placar
-    // alert(`Você acertou!\nPontuação: ${score}\nIniciando próximo nível!`);
+    score++;
+    updateScore();
     nextLevel();
   }
 };
@@ -95,19 +99,34 @@ const gameOver = (): void => {
     record = score;
     recordLabel.textContent = record.toString();
   }
-
-  // alert(`Pontuação: ${score}!\nVocê perdeu o jogo!\nClique em OK para iniciar um novo jogo.`);
   order = [];
   clickedOrder = [];
 
-  playGame();
+  restartGame()
 };
 
 const playGame = (): void => {
-  // alert("Bem-vindo ao Genius! Iniciando novo jogo!");
   score = 0;
-  updateScore(); // Reseta o placar
+  updateScore();
   nextLevel();
+};
+
+const restartGame = (): void => {
+  if (score > record) {
+    record = score;
+    recordLabel.textContent = record.toString();
+  }
+  order = [];
+  clickedOrder = [];
+  score = 0;
+  updateScore();
+  nextLevel();
+};
+
+// Função para iniciar o jogo e esconder a tela de início
+const startGame = (): void => {
+  startScreen.classList.add("hidden"); // Esconde a tela de início
+  playGame(); // Inicia o jogo
 };
 
 // Adicionando eventos de clique
@@ -116,4 +135,8 @@ green?.addEventListener("click", () => click(1));
 blue?.addEventListener("click", () => click(2));
 yellow?.addEventListener("click", () => click(3));
 
-playGame();
+// Evento para reiniciar o jogo
+restartButton.addEventListener("click", () => restartGame());
+
+// Evento para o botão "Jogar" na tela de início
+playButton.addEventListener("click", () => startGame());

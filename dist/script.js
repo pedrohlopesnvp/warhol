@@ -4,13 +4,17 @@ let clickedOrder = [];
 let score = 0;
 let record = 0;
 // Pegando os elementos do placar
-const scoreLabel = document.querySelector(".infos p:nth-child(1) label");
-const recordLabel = document.querySelector(".infos p:nth-child(2) label");
+const scoreLabel = document.querySelector(".infos p:nth-child(2) label");
+const recordLabel = document.querySelector(".infos p:nth-child(3) label");
+const restartButton = document.querySelector(".restart");
+// Elementos da tela de início
+const startScreen = document.querySelector(".start-screen");
+const playButton = document.querySelector(".play-button");
 const blue = document.querySelector(".blue");
 const red = document.querySelector(".red");
 const green = document.querySelector(".green");
 const yellow = document.querySelector(".yellow");
-if (!blue || !red || !green || !yellow || !scoreLabel || !recordLabel) {
+if (!blue || !red || !green || !yellow || !scoreLabel || !recordLabel || !restartButton || !startScreen || !playButton) {
     throw new Error("Elementos do DOM não encontrados.");
 }
 const updateScore = () => {
@@ -44,9 +48,8 @@ const checkOrder = () => {
         }
     }
     if (clickedOrder.length === order.length) {
-        score++; // Aumenta a pontuação ao passar de nível
-        updateScore(); // Atualiza o placar
-        // alert(`Você acertou!\nPontuação: ${score}\nIniciando próximo nível!`);
+        score++;
+        updateScore();
         nextLevel();
     }
 };
@@ -83,20 +86,37 @@ const gameOver = () => {
         record = score;
         recordLabel.textContent = record.toString();
     }
-    // alert(`Pontuação: ${score}!\nVocê perdeu o jogo!\nClique em OK para iniciar um novo jogo.`);
     order = [];
     clickedOrder = [];
-    playGame();
+    restartGame();
 };
 const playGame = () => {
-    // alert("Bem-vindo ao Genius! Iniciando novo jogo!");
     score = 0;
-    updateScore(); // Reseta o placar
+    updateScore();
     nextLevel();
+};
+const restartGame = () => {
+    if (score > record) {
+        record = score;
+        recordLabel.textContent = record.toString();
+    }
+    order = [];
+    clickedOrder = [];
+    score = 0;
+    updateScore();
+    nextLevel();
+};
+// Função para iniciar o jogo e esconder a tela de início
+const startGame = () => {
+    startScreen.classList.add("hidden"); // Esconde a tela de início
+    playGame(); // Inicia o jogo
 };
 // Adicionando eventos de clique
 red === null || red === void 0 ? void 0 : red.addEventListener("click", () => click(0));
 green === null || green === void 0 ? void 0 : green.addEventListener("click", () => click(1));
 blue === null || blue === void 0 ? void 0 : blue.addEventListener("click", () => click(2));
 yellow === null || yellow === void 0 ? void 0 : yellow.addEventListener("click", () => click(3));
-playGame();
+// Evento para reiniciar o jogo
+restartButton.addEventListener("click", () => restartGame());
+// Evento para o botão "Jogar" na tela de início
+playButton.addEventListener("click", () => startGame());
